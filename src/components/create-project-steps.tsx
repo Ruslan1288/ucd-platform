@@ -248,7 +248,7 @@ export function CreateProjectSteps({
           project_id: project.id,
           stage_id: stage.id,
           name: stage.name,
-          status: 'pending',
+          status: 'not_started',
           substages: JSON.stringify(stage.substages)
         }));
 
@@ -491,13 +491,9 @@ export function CreateProjectSteps({
 
       <Accordion type="multiple" className="w-full space-y-2">
         {projectStages.map((stage) => (
-          <AccordionItem 
-            key={stage.id} 
-            value={stage.id.toString()}
-            className="border rounded-lg px-4"
-          >
-            <AccordionTrigger className="hover:no-underline">
-              <div className="flex items-center gap-2">
+          <AccordionItem value={`stage-${stage.id}`} key={stage.id}>
+            <AccordionTrigger>
+              <div className="flex items-center gap-2 flex-1">
                 <Checkbox
                   id={`stage-${stage.id}`}
                   checked={selectedStages.some(s => s.id === stage.id)}
@@ -517,13 +513,11 @@ export function CreateProjectSteps({
                     }
                   }}
                 />
-                <span className="text-sm font-medium cursor-pointer flex-1">
-                  {stage.name}
-                </span>
+                <span className="text-sm font-medium">{stage.name}</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <div className="pl-6 space-y-2 mt-2">
+              <div className="space-y-2">
                 {stage.substages.map((substage) => (
                   <div key={substage.id} className="flex items-center gap-2 py-1">
                     <Checkbox
@@ -535,7 +529,6 @@ export function CreateProjectSteps({
                         const stageIndex = selectedStages.findIndex(s => s.id === stage.id);
                         
                         if (stageIndex === -1 && checked) {
-                          // Якщо етап ще не вибраний, додаємо його з цим підетапом
                           setSelectedStages([...selectedStages, {
                             id: stage.id,
                             name: stage.name,
@@ -546,7 +539,6 @@ export function CreateProjectSteps({
                             }]
                           }]);
                         } else if (stageIndex !== -1) {
-                          // Оновлюємо існуючий етап
                           setSelectedStages(selectedStages.map((s, index) => {
                             if (index === stageIndex) {
                               const newSubstages = checked
@@ -569,7 +561,7 @@ export function CreateProjectSteps({
                     />
                     <label 
                       htmlFor={`substage-${substage.id}`}
-                      className="text-sm cursor-pointer"
+                      className="text-sm"
                     >
                       {substage.name}
                     </label>

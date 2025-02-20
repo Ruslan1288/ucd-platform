@@ -183,11 +183,7 @@ export const ProjectView: React.FC<ProjectViewProps> = ({ project, onBack }) => 
       <div className="w-80 border-l bg-gray-50/40">
         <div className="p-6">
           <h2 className="text-lg font-semibold mb-4">Документи проекту</h2>
-          <Accordion 
-            type="multiple" 
-            value={activeAccordionItems}
-            onValueChange={setActiveAccordionItems}
-          >
+          <Accordion type="single" collapsible className="w-full">
             {projectStages.map((stage) => (
               <AccordionItem key={stage.id} value={stage.id}>
                 <AccordionTrigger>{stage.name}</AccordionTrigger>
@@ -197,12 +193,15 @@ export const ProjectView: React.FC<ProjectViewProps> = ({ project, onBack }) => 
                       <div
                         key={substage.id}
                         className={cn(
-                          "text-sm cursor-pointer hover:text-blue-500 p-2 rounded",
+                          "flex items-center justify-between text-sm cursor-pointer hover:text-blue-500 p-2 rounded",
                           selectedDocument === substage.name && "bg-blue-50 text-blue-600"
                         )}
                         onClick={() => setSelectedDocument(substage.name)}
                       >
-                        {substage.name}
+                        <span>{substage.name}</span>
+                        <span className="text-xs text-gray-500">
+                          {substage.completed ? '✓' : 'В процесі'}
+                        </span>
                       </div>
                     ))}
                   </div>

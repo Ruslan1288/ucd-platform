@@ -248,7 +248,7 @@ export function CreateProjectSteps({
           project_id: project.id,
           stage_id: stage.id,
           name: stage.name,
-          status: 'pending',
+          status: 'in_progress',
           substages: JSON.stringify(stage.substages)
         }));
 
@@ -496,32 +496,32 @@ export function CreateProjectSteps({
             value={stage.id.toString()}
             className="border rounded-lg px-4"
           >
-            <AccordionTrigger className="hover:no-underline">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id={`stage-${stage.id}`}
-                  checked={selectedStages.some(s => s.id === stage.id)}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setSelectedStages([...selectedStages, {
-                        id: stage.id,
-                        name: stage.name,
-                        substages: stage.substages.map(sub => ({
-                          id: sub.id,
-                          name: sub.name,
-                          completed: false
-                        }))
-                      }]);
-                    } else {
-                      setSelectedStages(selectedStages.filter(s => s.id !== stage.id));
-                    }
-                  }}
-                />
-                <span className="text-sm font-medium cursor-pointer flex-1">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id={`stage-${stage.id}`}
+                checked={selectedStages.some(s => s.id === stage.id)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setSelectedStages([...selectedStages, {
+                      id: stage.id,
+                      name: stage.name,
+                      substages: stage.substages.map(sub => ({
+                        id: sub.id,
+                        name: sub.name,
+                        completed: false
+                      }))
+                    }]);
+                  } else {
+                    setSelectedStages(selectedStages.filter(s => s.id !== stage.id));
+                  }
+                }}
+              />
+              <AccordionTrigger className="hover:no-underline flex-1">
+                <span className="text-sm font-medium cursor-pointer">
                   {stage.name}
                 </span>
-              </div>
-            </AccordionTrigger>
+              </AccordionTrigger>
+            </div>
             <AccordionContent>
               <div className="pl-6 space-y-2 mt-2">
                 {stage.substages.map((substage) => (

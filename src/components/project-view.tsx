@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Calendar } from 'lucide-react';
+import { ChevronLeft, Calendar, Circle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { 
   Accordion,
@@ -133,48 +133,50 @@ export const ProjectView: React.FC<ProjectViewProps> = ({ project, onBack }) => 
               <h1 className="text-2xl font-semibold">{project.name}</h1>
             </div>
 
-            {/* Загальний прогрес */}
-            <ProjectStatus project={project} stages={projectStages} />
+            {/* Прогрес */}
+            <Card>
+              <CardContent className="pt-6">
+                <h2 className="text-lg font-medium mb-4">Прогрес етапу</h2>
+                <Progress value={0} className="h-2 mb-2" />
+                <p className="text-sm text-gray-500">
+                  0% • 0 з 4 підетапів завершено
+                </p>
+              </CardContent>
+            </Card>
 
-            {/* Картки етапів */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Список підетапів */}
+            <div className="space-y-2">
               {projectStages.map((stage) => (
-                <Card 
-                  key={stage.id} 
-                  className="relative cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => handleStageClick(stage)}
-                >
-                  <div className={cn(
-                    "absolute top-0 right-0 w-2 h-2 rounded-full m-4",
-                    getStatusColor(stage.status)
-                  )} />
-                  <CardHeader>
-                    <CardTitle className="text-lg">{stage.name}</CardTitle>
-                    <CardDescription>
-                      <span className="flex items-center gap-2 text-sm text-gray-500 mt-2">
-                        <Calendar className="w-4 h-4" />
-                        <span>
-                          {stage.start_date && format(new Date(stage.start_date), 'dd.MM.yyyy')}
-                          {' - '}
-                          {stage.end_date && format(new Date(stage.end_date), 'dd.MM.yyyy')}
-                        </span>
-                      </span>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Progress value={stage.progress} className="h-1.5" />
-                      <div className="flex justify-between text-sm text-gray-500">
-                        <span>{stage.progress}%</span>
-                        <span>
-                          {stage.substages.filter(s => s.completed).length} з {stage.substages.length} підетапів
-                        </span>
-                      </div>
+                stage.substages.map((substage) => (
+                  <div
+                    key={substage.id}
+                    className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => setSelectedDocument(substage.name)}
+                  >
+                    {substage.completed ? (
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    ) : (
+                      <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
+                    )}
+                    <div className="flex-1">
+                      <h3 className="font-medium">{substage.name}</h3>
+                      <p className="text-sm text-gray-500">
+                        {substage.completed ? 'Завершено' : 'В процесі'}
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                ))
               ))}
             </div>
+
+            {/* Вміст документа */}
+            {selectedDocument && (
+              <CanvasDocument
+                projectId={project.id}
+                documentId={selectedDocument}
+                onBack={() => setSelectedDocument(null)}
+              />
+            )}
           </div>
         )}
       </div>
